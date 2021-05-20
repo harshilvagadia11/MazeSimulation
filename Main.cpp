@@ -17,9 +17,17 @@ Timer timer;
 
 bool quit = false;
 bool start = false;
+int tot_nodes=MAZEX*MAZEY;
+int tot_stones = 8;
+std::vector<int> loc_stones(tot_stones);
+std::vector<bool> loc_taken(tot_nodes);          // to check location if we dont place multiple stones at same loc
+int start_loc=-1,end_loc=-1;
+std::vector<std::vector<int>> adj(tot_nodes);
 
 bool init() {
 	bool success = true;
+	for(int i=0; i<tot_nodes;i++) loc_taken[tot_nodes]=false;
+	
 
 	if(SDL_Init(SDL_INIT_VIDEO) < 0) {
 		printf("SDL could not initialize! SDL Error: %s\n", SDL_GetError());
@@ -100,6 +108,35 @@ void close() {
 	SDL_Quit();
 }
 
+void get_start_loc(){
+	int x = rand()%tot_nodes;
+	start_loc=x;
+	loc_taken[x]=true;
+}
+
+void get_end_loc(){
+	int x = rand()%tot_nodes;
+	while(loc_taken[x]){
+		x = rand()%tot_nodes;
+	}
+	end_loc=x;
+	loc_taken[x]=true;
+}
+
+void get_stones() {
+	int i=0;
+	while(i<tot_stones){
+		int x = rand()%tot_nodes;
+		if (loc_taken[x]) continue;
+		loc_stones[i]=x;
+		i++;
+	}
+}
+
+void get_adjacency_list(){
+	maze.maze_to_list(adj);
+}
+
 int main(int argc, char* args[]) {
 	if(!init()) {
 		printf("Failed to initialize!\n");
@@ -113,6 +150,11 @@ int main(int argc, char* args[]) {
 
 			SDL_SetRenderDrawColor(gRenderer, 0, 0, 0, 255);
 			SDL_RenderClear(gRenderer);
+
+			get_start_loc();
+			get_end_loc();
+			get_stones();
+			get_adjacency_list();
 
             droid.insert(right); droid.insert(right); droid.insert(down); droid.insert(left);
 
