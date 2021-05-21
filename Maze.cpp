@@ -17,27 +17,18 @@ void Maze::initialise() {
 	}
 }
 
-void Maze::maze_to_list(std::vector<std::vector<int>> &a){
-	for(int i=0; i< xsize*ysize; i++){
-		int y=i/xsize;
-		int x=i%xsize;
-		if (MAZE[x][y].up){
-			int j=i-xsize;
-			a[i].push_back(j);
+void Maze::maze_to_list(std::vector<std::pair<int,int>> adj[][MAZEY]) {
+	for(int i = 1; i < xsize-1; i++) {
+		for(int j = 1; j < ysize-1; j++) {
+			if(!MAZE[i][j].up) {
+				adj[i][j].push_back({i,j-1});
+				adj[i][j-1].push_back({i,j});
+			}
+			if(!MAZE[i][j].left) {
+				adj[i][j].push_back({i-1,j});
+				adj[i-1][j].push_back({i,j});
+			}
 		}
-		if (MAZE[x][y].left){
-			int j=i-1;
-			a[i].push_back(j);
-		}
-		if (x+1<xsize && MAZE[x+1][y].left){                     // check right
-			int j=i+1;
-			a[i].push_back(j);
-		}
-		if (y+1<ysize && MAZE[x][y+1].up){                       // check down
-			int j=i+xsize;
-			a[i].push_back(j);			
-		}
-
 	}
 }
 

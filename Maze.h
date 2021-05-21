@@ -15,7 +15,7 @@ public:
     Maze();
     void initialise();
     void generate();
-    void maze_to_list(std::vector<std::vector<int>> &a);
+    void maze_to_list(std::vector<std::pair<int,int>> adj[][MAZEY]);
     void render(SDL_Renderer* renderer, Uint8 opacity);
 
 private:

@@ -7,7 +7,7 @@ Droid::Droid() {
     posY = GAP + BY + TEXT_GAP + 10;
     nextX = posX; nextY = posY;
     face = right;
-    vel = 0.2, delay = 0.0;
+    vel = 2, delay = 0.0;
 }
 
 void Droid::insert(int f) {
