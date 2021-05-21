@@ -22,7 +22,9 @@ bool check=false;
 
 bool quit = false;
 bool start = false;
-bool pause=false;
+bool pause = false;
+float vel = 1.0;
+float delay = 0.0;
 
 bool visited[MAZEX][MAZEY];
 std::map<std::pair<int,int>,int> status;
@@ -180,19 +182,21 @@ int main(int argc, char* args[]) {
 						if(e.key.keysym.sym == SDLK_RETURN) {
                             start = true;
                             timer.start();
-						}else if (start && e.key.keysym.sym==SDLK_SPACE){
+						} else if(start && e.key.keysym.sym==SDLK_SPACE) {
 							pause=!pause;
-						}else if (start && !pause && e.key.keysym.sym==SDLK_RIGHT){
+						} else if(start && !pause && e.key.keysym.sym==SDLK_RIGHT) {
 							timer1.start();
 							prompt="Speed Increased";
 							check=true;
-							droid.vel+=0.5;
-						}else if (start && !pause && e.key.keysym.sym==SDLK_LEFT){
-							if (droid.vel>0.5) {
-								timer1.start();
-								droid.vel-=0.5;
-								prompt="Speed Decreased";
-								check=true;
+							if(vel < 40.0) {
+								vel += 0.5;
+							}
+						} else if(start && !pause && e.key.keysym.sym==SDLK_LEFT) {
+							timer1.start();
+							prompt="Speed Decreased";
+							check=true;
+							if(vel > 0.5) {
+								vel -= 0.5;
 							}
 						}
 					}
@@ -213,23 +217,22 @@ int main(int argc, char* args[]) {
 						gPromptTexture.loadFromRenderedText(gRenderer, prompt.c_str(), textColor);
 						gPromptTexture.render(gRenderer, (SCREEN_WIDTH - gPromptTexture.getWidth())/2, SCREEN_HEIGHT-gPromptTexture.getHeight()-BY);
                         maze.render(gRenderer, 255);
-						for(auto it : status){
+						for(auto it : status) {
 							int x_cor=it.first.first;
 							int y_cor=it.first.second;
 							if (it.second==1) gFirstVisTexture.render(gRenderer, x_cor+10, y_cor+10, NULL, 0);
 							else gSecondVisTexture.render(gRenderer, x_cor+10, y_cor+10, NULL, 0);
 						}
                         if (!pause) {
-							droid.move();
-							int x=droid.getX();
-							int y=droid.getY();
-							if (status.find({x,y})==status.end()){
-								status[{x,y}]=1;
-								droid.vel+=0.1;
-							}else status[{x,y}]=2;
+							delay += vel;
+							float integer;
+							delay = modf(delay, &integer);
+							while(integer > 0.0) {
+								droid.move(status);
+								integer--;
+							}
 						}
                         droid.render(gRenderer, gDroidTexture);
-						
                     }
 				} else {
 					gTextTexture.render(gRenderer, (SCREEN_WIDTH - gTextTexture.getWidth())/2, (SCREEN_HEIGHT - gTextTexture.getHeight())/2);

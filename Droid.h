@@ -8,18 +8,15 @@ class Droid {
 public:
     Droid();
     void insert(int f);
-    void move();
+    void move(std::map<std::pair<int,int>,int> &status);
     void render(SDL_Renderer *gRenderer, Texture &gDroidTexture);
-    int getX();
-    int getY();
-    float vel;
 
 private:
     std::queue<int> buffer;
     int posX, posY;
     int nextX, nextY;
     int face;
-    float delay;
+    bool found;
 };
 
 #endif

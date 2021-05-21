@@ -7,19 +7,22 @@ Droid::Droid() {
     posY = GAP + BY + TEXT_GAP + 10;
     nextX = posX; nextY = posY;
     face = right;
-    vel = 2, delay = 0.0;
+    found = false;
 }
 
 void Droid::insert(int f) {
     buffer.push(f);
 }
 
-void Droid::move() {
-    delay += vel;
-    if(delay < 1) return;
-    delay--;
+void Droid::move(std::map<std::pair<int,int>,int> &status) {
     if(posX == nextX && posY == nextY) {
-        if(buffer.empty()) return;    // do here
+        if(status.find({nextX,nextY}) == status.end()) {
+            status[{nextX,nextY}] = 1;
+        } else status[{nextX,nextY}] = 2;
+        if(buffer.empty()) return;
+        if((buffer.front() == left && face == right) || (buffer.front() == right && face == left) || (buffer.front() == up && face == down) || (buffer.front() == down && face == up)) {
+            status[{nextX,nextY}] = 2;
+        }
         face = buffer.front();
         buffer.pop();
         if(face == left) nextX -= GAP;
@@ -28,18 +31,11 @@ void Droid::move() {
         else nextY += GAP;
     }
     if(posX != nextX || posY != nextY) {
-        if(face == left) posX--;
-        else if(face == up) posY--;
-        else if(face == right) posX++;
-        else posY++;
+        if(face == left) posX -= 1;
+        else if(face == up) posY -= 1;
+        else if(face == right) posX += 1;
+        else posY += 1;
     }
-}
-
-int Droid::getX(){
-    return posX;
-}
-int Droid::getY(){
-    return posY;
 }
 
 void Droid::render(SDL_Renderer *gRenderer, Texture &gDroidTexture) {
