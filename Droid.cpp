@@ -19,7 +19,7 @@ void Droid::move() {
     if(delay < 1) return;
     delay--;
     if(posX == nextX && posY == nextY) {
-        if(buffer.empty()) return;
+        if(buffer.empty()) return;    // do here
         face = buffer.front();
         buffer.pop();
         if(face == left) nextX -= GAP;
@@ -33,6 +33,13 @@ void Droid::move() {
         else if(face == right) posX++;
         else posY++;
     }
+}
+
+int Droid::getX(){
+    return posX;
+}
+int Droid::getY(){
+    return posY;
 }
 
 void Droid::render(SDL_Renderer *gRenderer, Texture &gDroidTexture) {
