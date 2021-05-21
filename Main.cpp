@@ -120,11 +120,11 @@ bool loadMedia() {
 		printf( "Failed to render text texture!\n" );
 		success = false;
 	}
-	if(!gFirstVisTexture.loadFromFile(gRenderer, "images/yellow_dot _small.png")) {
+	if(!gFirstVisTexture.loadFromFile(gRenderer, "images/yellow_dot_small.png")) {
 		printf( "Failed to render text texture!\n" );
 		success = false;
 	}
-	if(!gSecondVisTexture.loadFromFile(gRenderer, "images/purple_dot_small.png")) {     // purple or green
+	if(!gSecondVisTexture.loadFromFile(gRenderer, "images/purple_dot_small.png")) {    
 		printf( "Failed to render text texture!\n" );
 		success = false;
 	}
