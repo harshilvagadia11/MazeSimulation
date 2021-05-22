@@ -21,6 +21,9 @@ Texture gDFSTexture2;
 Texture gBipTexture1;
 Texture gBipTexture2;
 
+Mix_Music *gGameMusic = NULL;
+Mix_Chunk *gChangeTabSound = NULL;
+
 Maze maze;
 Droid droid;
 Timer timer,timer1;
@@ -166,14 +169,42 @@ bool loadMedia() {
 		success = false;
 	}
 
+	gGameMusic = Mix_LoadMUS( "sounds/game_music_low.wav" );
+	if( gGameMusic == NULL )
+	{
+		printf( "Failed to load beat music! SDL_mixer Error: %s\n", Mix_GetError() );
+		success = false;
+	}
+
+	gChangeTabSound = Mix_LoadWAV( "sounds/change_tab.wav" );
+	if( gChangeTabSound == NULL )
+	{
+		printf( "Failed to load high sound effect! SDL_mixer Error: %s\n", Mix_GetError() );
+		success = false;
+	}
+
     maze.generate();
 
 	return success;
 }
 
 void close() {
-	
+
 	gTextTexture.free();
+	gDroidTexture.free();
+	gFirstVisTexture.free();
+	gSecondVisTexture.free();
+	gNotifTexture.free();
+	gNotifTexture1.free();
+	gNotifTexture2.free();
+	gPromptTexture.free();
+	gDFSTexture1.free();
+	gDFSTexture2.free();
+	gBipTexture1.free();
+	gBipTexture2.free();
+	
+	Mix_FreeMusic( gGameMusic );
+	gGameMusic = NULL;
 
 	SDL_DestroyRenderer(gRenderer);
 	SDL_DestroyWindow(gWindow);
@@ -219,10 +250,13 @@ int main(int argc, char* args[]) {
 						if(e.key.keysym.sym == SDLK_RETURN) {
                             start = true;
                             timer.start();
+							Mix_PlayChannel( -1, gChangeTabSound, 0 );
 						} else if (!start && (e.key.keysym.sym == SDLK_DOWN || e.key.keysym.sym == SDLK_UP) ){
 							run_dfs=!run_dfs;
+							Mix_PlayChannel( -1, gChangeTabSound, 0 );
 						}else if(start && e.key.keysym.sym==SDLK_SPACE) {
 							pause=!pause;
+							Mix_PlayChannel( -1, gChangeTabSound, 0 );
 						} else if(start && !pause && e.key.keysym.sym==SDLK_RIGHT) {
 							timer1.start();
 							prompt="Speed Increased";
@@ -230,6 +264,7 @@ int main(int argc, char* args[]) {
 							if(vel < 40.0) {
 								vel += 0.5;
 							}
+							Mix_PlayChannel( -1, gChangeTabSound, 0 );
 						} else if(start && !pause && e.key.keysym.sym==SDLK_LEFT) {
 							timer1.start();
 							prompt="Speed Decreased";
@@ -237,6 +272,7 @@ int main(int argc, char* args[]) {
 							if(vel > 0.5) {
 								vel -= 0.5;
 							}
+							Mix_PlayChannel( -1, gChangeTabSound, 0 );
 						}
 					}
 				}
@@ -247,6 +283,11 @@ int main(int argc, char* args[]) {
 				if(start) {
 					if(timer.getTicks() <= 2000) maze.render(gRenderer, 255*timer.getTicks()/2000);
 					else {
+						if( Mix_PlayingMusic() == 0 )
+						{
+							//Play the music
+							Mix_PlayMusic( gGameMusic, -1 );
+						}
 						if (pause) prompt="Paused";
 						if (check && timer1.getTicks()>2000) {
 							check=false;
