@@ -123,8 +123,8 @@ bool loadMedia() {
 		printf( "Failed to render text texture!\n" );
 		success = false;
 	}
-	gBipTexture2.setAlpha(50);
-	gDFSTexture2.setAlpha(50);
+	gBipTexture2.setAlpha(100);
+	gDFSTexture2.setAlpha(100);
 	textColor = {0, 0, 205};
 	if(!gDFSTexture1.loadFromRenderedText(gRenderer, "Simulate DFS", textColor)) {
 		printf( "Failed to render text texture!\n" );
