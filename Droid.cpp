@@ -10,6 +10,7 @@ Droid::Droid() {
     found = false;
     yellow=true;
     bipartite=true;
+    done=false;
 }
 
 void Droid::insert(int f) {
@@ -23,7 +24,10 @@ void Droid::move1(std::map<std::pair<int,int>,int> &status) {
             else status[{nextX,nextY}] = 2;
         }else{
             if ((yellow && status[{nextX,nextY}]==2) || (!yellow && status[{nextX,nextY}]==1)) {
-                if (nextX==56 && nextY==66) bipartite=true;
+                if (nextX==56 && nextY==66) {
+                    bipartite=true;
+                    done=true;
+                }
                 else bipartite=false;
             }
         }

@@ -12,6 +12,7 @@ public:
     void move1(std::map<std::pair<int,int>,int> &status);
     void render(SDL_Renderer *gRenderer, Texture &gDroidTexture);
     bool bipartite;
+    bool done;
 
 private:
     std::queue<int> buffer;

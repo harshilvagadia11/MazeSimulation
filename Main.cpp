@@ -15,6 +15,7 @@ Texture gSecondVisTexture;
 Texture gNotifTexture;
 Texture gNotifTexture1;
 Texture gNotifTexture2;
+Texture gNotifTexture3;
 Texture gPromptTexture;
 Texture gDFSTexture1;
 Texture gDFSTexture2;
@@ -156,6 +157,10 @@ bool loadMedia() {
 		printf( "Failed to load tank texture!\n" );
 		success = false;
 	}
+	if(!gNotifTexture3.loadFromRenderedText(gRenderer, "Graph is Bipartite!", textColor)) {
+		printf( "Failed to load tank texture!\n" );
+		success = false;
+	}
     if(!gDroidTexture.loadFromFile(gRenderer, "images/tank_opaque.png")) {
 		printf( "Failed to render text texture!\n" );
 		success = false;
@@ -197,6 +202,7 @@ void close() {
 	gNotifTexture.free();
 	gNotifTexture1.free();
 	gNotifTexture2.free();
+	gNotifTexture3.free();
 	gPromptTexture.free();
 	gDFSTexture1.free();
 	gDFSTexture2.free();
@@ -295,7 +301,10 @@ int main(int argc, char* args[]) {
 						if (!pause && !check) prompt=" ";
 						if (run_dfs) gNotifTexture.render(gRenderer, (SCREEN_WIDTH - gNotifTexture.getWidth())/2, BY);
 						else {
-							if (droid.bipartite) gNotifTexture1.render(gRenderer, (SCREEN_WIDTH - gNotifTexture1.getWidth())/2, BY);
+							if (droid.bipartite) {
+								if (!droid.done) gNotifTexture1.render(gRenderer, (SCREEN_WIDTH - gNotifTexture1.getWidth())/2, BY);
+								else gNotifTexture3.render(gRenderer, (SCREEN_WIDTH - gNotifTexture3.getWidth())/2, BY);
+							}
 							else gNotifTexture2.render(gRenderer, (SCREEN_WIDTH - gNotifTexture2.getWidth())/2, BY);
 						}
 						if (droid.bipartite) gPromptTexture.loadFromRenderedText(gRenderer, prompt.c_str(), textColor); 
