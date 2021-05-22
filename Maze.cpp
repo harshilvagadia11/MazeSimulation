@@ -40,6 +40,39 @@ void Maze::generate() {
     int whichway;
     bool success;
     do {
+		if(MAZE[xcur][ycur-1].in && MAZE[xcur][ycur+1].in && MAZE[xcur-1][ycur].in && MAZE[xcur+1][ycur].in) {
+			do {
+				success = 0;
+				whichway = rand()%4;
+				switch(whichway) {
+				case UP:
+					if(MAZE[xcur][ycur].up && ycur != 1){
+						success = 1;
+						MAZE[xcur][ycur].up = 0;
+					}
+					break;
+				case DOWN:
+					if(MAZE[xcur][ycur+1].up && ycur != ysize-2){
+						success = 1;
+						MAZE[xcur][ycur+1].up = 0;
+					}
+					break;
+				case LEFT:
+					if(MAZE[xcur][ycur].left && xcur != 1) {
+						success = 1;
+						MAZE[xcur][ycur].left = 0;
+					}
+					break;
+				case RIGHT:
+					if(MAZE[xcur+1][ycur].left && xcur != xsize-2) {
+						success = 1;
+						MAZE[xcur+1][ycur].left = 0;
+					}
+					break;
+				}
+			} while(!success);
+		}
+
         while(MAZE[xcur][ycur-1].in && MAZE[xcur][ycur+1].in && MAZE[xcur-1][ycur].in && MAZE[xcur+1][ycur].in) {
             int xcur2 = MAZE[xcur][ycur].prevx;
             ycur = MAZE[xcur][ycur].prevy;
