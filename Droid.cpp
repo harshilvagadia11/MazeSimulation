@@ -9,6 +9,7 @@ Droid::Droid() {
     face = right;
     found = false;
     yellow=true;
+    bipartite=true;
 }
 
 void Droid::insert(int f) {
@@ -20,12 +21,11 @@ void Droid::move1(std::map<std::pair<int,int>,int> &status) {
         if(status.find({nextX,nextY}) == status.end()) {
             if (yellow) status[{nextX,nextY}] = 1;
             else status[{nextX,nextY}] = 2;
+        }else{
+            if ((yellow && status[{nextX,nextY}]==2) || (!yellow && status[{nextX,nextY}]==1)) bipartite=false;
         }
         yellow=!yellow;
         if(buffer.empty()) return;
-        // if((buffer.front() == left && face == right) || (buffer.front() == right && face == left) || (buffer.front() == up && face == down) || (buffer.front() == down && face == up)) {
-        //     status[{nextX,nextY}] = 2;
-        // }
         face = buffer.front();
         buffer.pop();
         if(face == left) nextX -= GAP;

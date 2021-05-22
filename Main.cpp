@@ -14,6 +14,7 @@ Texture gFirstVisTexture;
 Texture gSecondVisTexture;
 Texture gNotifTexture;
 Texture gNotifTexture1;
+Texture gNotifTexture2;
 Texture gPromptTexture;
 Texture gDFSTexture1;
 Texture gDFSTexture2;
@@ -144,7 +145,11 @@ bool loadMedia() {
 		printf( "Failed to load tank texture!\n" );
 		success = false;
 	}
-	if(!gNotifTexture1.loadFromRenderedText(gRenderer, "Simulation of Bipartite Graph!", textColor)) {
+	if(!gNotifTexture1.loadFromRenderedText(gRenderer, "Simulation of Bipartite Algorithm!", textColor)) {
+		printf( "Failed to load tank texture!\n" );
+		success = false;
+	}
+	if(!gNotifTexture2.loadFromRenderedText(gRenderer, "Graph is not Bipartite!", textColor)) {
 		printf( "Failed to load tank texture!\n" );
 		success = false;
 	}
@@ -248,9 +253,12 @@ int main(int argc, char* args[]) {
 						} 
 						if (!pause && !check) prompt=" ";
 						if (run_dfs) gNotifTexture.render(gRenderer, (SCREEN_WIDTH - gNotifTexture.getWidth())/2, BY);
-						else gNotifTexture1.render(gRenderer, (SCREEN_WIDTH - gNotifTexture1.getWidth())/2, BY);
-						gPromptTexture.loadFromRenderedText(gRenderer, prompt.c_str(), textColor);
-						gPromptTexture.render(gRenderer, (SCREEN_WIDTH - gPromptTexture.getWidth())/2, SCREEN_HEIGHT-gPromptTexture.getHeight()-BY);
+						else {
+							if (droid.bipartite) gNotifTexture1.render(gRenderer, (SCREEN_WIDTH - gNotifTexture1.getWidth())/2, BY);
+							else gNotifTexture2.render(gRenderer, (SCREEN_WIDTH - gNotifTexture2.getWidth())/2, BY);
+						}
+						if (droid.bipartite) gPromptTexture.loadFromRenderedText(gRenderer, prompt.c_str(), textColor); 
+						if (droid.bipartite) gPromptTexture.render(gRenderer, (SCREEN_WIDTH - gPromptTexture.getWidth())/2, SCREEN_HEIGHT-gPromptTexture.getHeight()-BY);
                         maze.render(gRenderer, 255);
 						for(auto it : status) {
 							int x_cor=it.first.first;
@@ -258,7 +266,7 @@ int main(int argc, char* args[]) {
 							if (it.second==1) gFirstVisTexture.render(gRenderer, x_cor+10, y_cor+10, NULL, 0);
 							else gSecondVisTexture.render(gRenderer, x_cor+10, y_cor+10, NULL, 0);
 						}
-                        if (!pause) {
+                        if (!pause && droid.bipartite) {
 							delay += vel;
 							float integer;
 							delay = modf(delay, &integer);
