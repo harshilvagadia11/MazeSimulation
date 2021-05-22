@@ -13,7 +13,12 @@ Texture gDroidTexture;
 Texture gFirstVisTexture;
 Texture gSecondVisTexture;
 Texture gNotifTexture;
+Texture gNotifTexture1;
 Texture gPromptTexture;
+Texture gDFSTexture1;
+Texture gDFSTexture2;
+Texture gBipTexture1;
+Texture gBipTexture2;
 
 Maze maze;
 Droid droid;
@@ -25,6 +30,7 @@ bool start = false;
 bool pause = false;
 float vel = 1.0;
 float delay = 0.0;
+bool run_dfs=true;
 
 bool visited[MAZEX][MAZEY];
 std::map<std::pair<int,int>,int> status;
@@ -107,12 +113,38 @@ bool init() {
 bool loadMedia() {
 	bool success = true;
 
-	SDL_Color textColor = {255, 64, 0};
-	if(!gTextTexture.loadFromRenderedText(gRenderer, "Press ENTER to start simulation!", textColor)) {
+	//SDL_Color textColor = {192, 192, 192};
+	SDL_Color textColor = {0, 0, 205};
+	if(!gDFSTexture2.loadFromRenderedText(gRenderer, "Simulate DFS", textColor)) {
 		printf( "Failed to render text texture!\n" );
 		success = false;
 	}
+	if(!gBipTexture2.loadFromRenderedText(gRenderer, "Simulate Bipartite", textColor)) {
+		printf( "Failed to render text texture!\n" );
+		success = false;
+	}
+	gBipTexture2.setAlpha(50);
+	gDFSTexture2.setAlpha(50);
+	textColor = {0, 0, 205};
+	if(!gDFSTexture1.loadFromRenderedText(gRenderer, "Simulate DFS", textColor)) {
+		printf( "Failed to render text texture!\n" );
+		success = false;
+	}
+	if(!gBipTexture1.loadFromRenderedText(gRenderer, "Simulate Bipartite", textColor)) {
+		printf( "Failed to render text texture!\n" );
+		success = false;
+	}
+	textColor = {255, 64, 0};
+	if(!gTextTexture.loadFromRenderedText(gRenderer, "Select the simulation and Press ENTER!", textColor)) {
+		printf( "Failed to render text texture!\n" );
+		success = false;
+	}
+	
 	if(!gNotifTexture.loadFromRenderedText(gRenderer, "Simulation of DFS!", textColor)) {
+		printf( "Failed to load tank texture!\n" );
+		success = false;
+	}
+	if(!gNotifTexture1.loadFromRenderedText(gRenderer, "Simulation of Bipartite Graph!", textColor)) {
 		printf( "Failed to load tank texture!\n" );
 		success = false;
 	}
@@ -182,7 +214,9 @@ int main(int argc, char* args[]) {
 						if(e.key.keysym.sym == SDLK_RETURN) {
                             start = true;
                             timer.start();
-						} else if(start && e.key.keysym.sym==SDLK_SPACE) {
+						} else if (!start && (e.key.keysym.sym == SDLK_DOWN || e.key.keysym.sym == SDLK_UP) ){
+							run_dfs=!run_dfs;
+						}else if(start && e.key.keysym.sym==SDLK_SPACE) {
 							pause=!pause;
 						} else if(start && !pause && e.key.keysym.sym==SDLK_RIGHT) {
 							timer1.start();
@@ -213,7 +247,8 @@ int main(int argc, char* args[]) {
 							check=false;
 						} 
 						if (!pause && !check) prompt=" ";
-						gNotifTexture.render(gRenderer, (SCREEN_WIDTH - gNotifTexture.getWidth())/2, BY);
+						if (run_dfs) gNotifTexture.render(gRenderer, (SCREEN_WIDTH - gNotifTexture.getWidth())/2, BY);
+						else gNotifTexture1.render(gRenderer, (SCREEN_WIDTH - gNotifTexture1.getWidth())/2, BY);
 						gPromptTexture.loadFromRenderedText(gRenderer, prompt.c_str(), textColor);
 						gPromptTexture.render(gRenderer, (SCREEN_WIDTH - gPromptTexture.getWidth())/2, SCREEN_HEIGHT-gPromptTexture.getHeight()-BY);
                         maze.render(gRenderer, 255);
@@ -228,7 +263,10 @@ int main(int argc, char* args[]) {
 							float integer;
 							delay = modf(delay, &integer);
 							while(integer > 0.0) {
-								droid.move(status);
+								if (run_dfs) droid.move(status);
+								else {
+									droid.move1(status);
+								}
 								integer--;
 							}
 						}
@@ -236,6 +274,13 @@ int main(int argc, char* args[]) {
                     }
 				} else {
 					gTextTexture.render(gRenderer, (SCREEN_WIDTH - gTextTexture.getWidth())/2, (SCREEN_HEIGHT - gTextTexture.getHeight())/2);
+					if (run_dfs){
+						gDFSTexture1.render(gRenderer, (SCREEN_WIDTH - gDFSTexture1.getWidth())/2, (SCREEN_HEIGHT - gDFSTexture1.getHeight())/2+gTextTexture.getHeight());
+						gBipTexture2.render(gRenderer, (SCREEN_WIDTH - gBipTexture2.getWidth())/2, (SCREEN_HEIGHT - gBipTexture2.getHeight())/2+gTextTexture.getHeight()+gDFSTexture1.getHeight());
+					}else{
+						gDFSTexture2.render(gRenderer, (SCREEN_WIDTH - gDFSTexture2.getWidth())/2, (SCREEN_HEIGHT - gDFSTexture2.getHeight())/2+gTextTexture.getHeight());
+						gBipTexture1.render(gRenderer, (SCREEN_WIDTH - gBipTexture1.getWidth())/2, (SCREEN_HEIGHT - gBipTexture1.getHeight())/2+gTextTexture.getHeight()+gDFSTexture2.getHeight());
+					}
 				}
 
 				SDL_RenderPresent(gRenderer);

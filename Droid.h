@@ -9,6 +9,7 @@ public:
     Droid();
     void insert(int f);
     void move(std::map<std::pair<int,int>,int> &status);
+    void move1(std::map<std::pair<int,int>,int> &status);
     void render(SDL_Renderer *gRenderer, Texture &gDroidTexture);
 
 private:
@@ -17,6 +18,7 @@ private:
     int nextX, nextY;
     int face;
     bool found;
+    bool yellow;
 };
 
 #endif
